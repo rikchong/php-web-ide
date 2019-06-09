@@ -1,9 +1,10 @@
 FROM php:7.2-fpm
 
-COPY code-server /usr/bin/code-server
 COPY run-server-and-fpm.sh /usr/bin/run-server-and-fpm.sh
 
-RUN mkdir -pv /usr/share/man/man1 \
+RUN cd /usr/local && mkdir -pv /usr/share/man/man1 \
+  && curl -sL https://github.com/cdr/code-server/releases/download/1.1140-vsc1.33.1/code-server1.1140-vsc1.33.1-linux-x64.tar.gz -o - | tar xvz && ln -s `pwd`/code-server1.1140-vsc1.33.1-linux-x64/code-server /usr/local/bin \ 
+  && chmod a+x /usr/local/bin/code-server && chmod a+x /usr/bin/run-server-and-fpm.sh \
   && apt-get update && apt-get install -y --no-install-recommends apt-utils \
   && apt-get install -y --no-install-recommends \
     libfreetype6-dev libssl-dev apt-utils libxslt-dev \
@@ -14,7 +15,6 @@ RUN mkdir -pv /usr/share/man/man1 \
   && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db \
   && add-apt-repository 'deb http://mirror.stshosting.co.uk/mariadb/repo/10.0/debian wheezy main' \
   && apt-get -y install nodejs mariadb-client \
-  && cd /usr/local \
   && curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/5.1.4/flyway-commandline-5.1.4-linux-x64.tar.gz -o - | tar xvz && ln -s `pwd`/flyway-5.1.4/flyway /usr/local/bin \
   && curl -L http://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz -o - | tar xvz && ln -s `pwd`/apache-maven-3.6.1/bin/mvn /usr/local/bin \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
